@@ -1,0 +1,23 @@
+code/kaggle_downloads/csv/air_master_sql_no_outliers.csv was generated via sqlite, using the follow SQL query:
+
+SELECT *
+  FROM (
+           SELECT DATE(visit_datetime) AS reserve_visit_date,
+                  air_reserve.air_store_id,
+                  SUM(air_reserve.reserve_visitors) AS sum_reserve_visitors
+             FROM air_reserve
+             WHERE reserve_visitors IS NOT NULL
+            GROUP BY air_store_id, DATE(visit_datetime)
+       )
+       AS reserve_stores_date
+       JOIN
+       air_visit_data ON air_visit_data.air_store_id = reserve_stores_date.air_store_id AND
+                         air_visit_data.visit_date = reserve_stores_date.reserve_visit_date
+     JOIN air_store_info ON air_store_info.air_store_id = reserve_stores_date.air_store_id;
+
+In Excel, outliers were removed
+
+air_465bddfed3353b23
+air_e7fbee4e3cfe65c5
+
+with reservation visitors > 400
