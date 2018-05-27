@@ -1,0 +1,40 @@
+library(dbscan)
+library(MASS)
+airdata <- read.csv("jen_air_visits.csv", stringsAsFactors=FALSE)
+
+#data prep
+clustertable <- airdata[,-1]
+clustertablenoid <- clustertable[,-3]
+clustertablenoid$longitude <- substr(clustertablenoid$longitude,0,3)
+clustertablenoid$latitude <- substr(clustertablenoid$latitude,0,2)
+
+clustertablenoid$air_genre_name <- as.numeric(as.factor(clustertablenoid$air_genre_name))
+clustertablenoid$air_area_name <- as.numeric(as.factor(clustertablenoid$air_area_name))
+clustertablenoid$day_of_week <- as.numeric(as.factor(clustertablenoid$day_of_week))
+clustertablenoid$longitude <- as.numeric(clustertablenoid$longitude)
+clustertablenoid$latitude <- as.numeric(clustertablenoid$latitude)
+
+#take a sample, so it doesn't take forever
+sd <- clustertablenoid[sample(nrow(clustertablenoid),2000),]
+
+#cluster the sample using dbscan - parameter set in an adhoc way!
+dbscan_result <- dbscan(sd, eps = 5)
+dbscan(sd, eps = 5)
+
+
+#visualize overall results
+
+parcoord(sd, col=dbscan_result$cluster)
+pairs(sd, col=dbscan_result$cluster)
+
+#looking at individual clusters
+
+sdcluster1 <- sd[dbscan_result$cluster==1,]
+parcoord(sdcluster1)
+
+sdcluster9 <- sd[dbscan_result$cluster==9,]
+parcoord(sdcluster9)
+
+
+
+
